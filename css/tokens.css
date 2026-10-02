@@ -1,0 +1,40 @@
+/* Design tokens de Nexo OS. Solo tema oscuro (no hay toggle). Contrastes AA calculados sobre fondo #0D0607 y superficies translúcidas. */
+:root {
+  color-scheme: dark;
+  /* Superficies */
+  --bg: #0d0607; --bg-elev: #151010; --bg-modal: #181010;
+  --surface: rgba(255, 255, 255, .03); --surface-2: rgba(255, 255, 255, .06); --surface-hover: rgba(255, 255, 255, .05);
+  --border: rgba(255, 255, 255, .10); --border-subtle: rgba(255, 255, 255, .06);
+  --border-input: rgba(255, 255, 255, .36); /* bordes de campos de formulario: >= 3:1 (WCAG 1.4.11); la referencia usa .10 */
+  /* Texto (--text-3 ajustado a .62 y --placeholder a .55 respecto de la referencia: AA) */
+  --text: #ffffff; --text-2: rgba(255, 255, 255, .74); --text-3: rgba(255, 255, 255, .62); --placeholder: rgba(255, 255, 255, .55);
+  /* Marca */
+  --primary: #A81F3D; --primary-hover: #8f1a34; --on-primary: #ffffff; --primary-text: #ff6b8a;
+  --accent: #E8C077; --accent-hover: #d9b36e; --on-accent: #1a0f10; --accent-tint: rgba(232, 192, 119, .10); --accent-border: rgba(232, 192, 119, .20);
+  --primary-tint: rgba(168, 31, 61, .10); --primary-border: rgba(168, 31, 61, .35);
+  /* Estados (siempre acompañados de texto/signo) */
+  --success: #34d399; --success-bg: rgba(16, 185, 129, .14); --success-solid: #10b981; --on-success-solid: #062a1c;
+  --danger: #f87171; --danger-text: #fca5a5; --danger-bg: rgba(248, 113, 113, .12);
+  --warning: #fbbf24; --warning-bg: rgba(245, 158, 11, .14);
+  --info: #7dd3fc; --info-bg: rgba(56, 189, 248, .12);
+  --focus: #E8C077;
+  --overlay: rgba(0, 0, 0, .70);
+  --invert-bg: #ffffff; --invert-text: #000000; --invert-text-2: rgba(0, 0, 0, .68);
+  /* Gráficos: barra degradé accent -> primary; series con texto */
+  --chart-1: #E8C077; --chart-2: #34d399; --chart-3: #ff6b8a; --chart-4: #a78bfa; --chart-5: #7dd3fc;
+
+  /* Tipografía: system-ui (0 requests); Inter solo si está instalada localmente */
+  --font: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --fs-xs: 12px; --fs-sm: 13px; --fs-base: 14px; --fs-md: 16px; --fs-lg: 20px; --fs-xl: 24px; --fs-2xl: 28px; --fs-3xl: 36px;
+  --sp-1: 4px; --sp-2: 8px; --sp-3: 12px; --sp-4: 16px; --sp-5: 20px; --sp-6: 24px; --sp-7: 32px; --sp-8: 40px;
+  --r-sm: 8px; --r-md: 12px; --r-lg: 16px; --r-xl: 20px; --r-2xl: 24px; --r-3xl: 28px; --r-pill: 9999px;
+  --sh-pop: 0 25px 50px -12px rgba(0, 0, 0, .5);
+  --dur: 150ms;
+  --sidebar-w: 264px; --topbar-h: 68px; --touch: 44px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --dur: 0ms; }
+  *, *::before, *::after { animation: none !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
+}
