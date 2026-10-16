@@ -2,8 +2,8 @@ import * as repo from '../data/repo.js';
 import { esc, dateTime } from '../ui/format.js';
 import { toast } from '../ui/toast.js';
 
-const LINK = { operation: () => '#/ventas/historial', item: () => '#/stock', cashSession: () => '#/caja', expense: () => '#/gastos' };
-const TYPE = { stock: 'Stock', caja: 'Caja' };
+const LINK = { operation: () => '#/ventas/historial', item: () => '#/stock', expense: () => '#/gastos' };
+const TYPE = { stock: 'Stock' };
 
 export async function render(el) {
   el.innerHTML = '<div class="page-head"><div><h1>Notificaciones</h1><p class="sub" id="nSub"></p></div><button type="button" class="btn btn-secondary" id="readAll">Marcar todas como leídas</button></div><section class="card" id="nBody"></section>';

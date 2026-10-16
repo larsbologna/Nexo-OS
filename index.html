@@ -4,11 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Nexo OS</title>
-<meta name="description" content="Nexo OS: sistema operativo para negocios locales. Ventas, caja, stock, gastos y finanzas en un panel.">
-<meta name="color-scheme" content="dark">
-<meta name="theme-color" content="#0d0607">
+<meta name="description" content="Nexo OS: sistema operativo para negocios locales. Ventas, stock, gastos y finanzas en un panel.">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#F2F4F1" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0E1311" media="(prefers-color-scheme: dark)">
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..750&family=Instrument+Sans:wght@400..700&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <link rel="stylesheet" href="css/tokens.css">
 <link rel="stylesheet" href="css/base.css">
 <link rel="stylesheet" href="css/components.css">
@@ -18,7 +22,7 @@
 <div class="app no-shell" id="app">
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-head">
-      <span class="brand-mark" id="brandMark" aria-hidden="true">NX</span>
+      <span class="brand-mark" id="brandMark" aria-hidden="true"><svg viewBox="0 0 36 36"><circle cx="13.5" cy="18" r="5.5" fill="none" stroke="currentColor" stroke-width="2.4"/><circle cx="22.5" cy="18" r="5.5" fill="none" stroke="currentColor" stroke-width="2.4"/><circle cx="28.5" cy="8.5" r="2.8" fill="#EDB04F"/></svg></span>
       <div class="brand-text"><span class="brand-name" id="brandName">Nexo OS</span><span class="brand-sub" id="brandSub"></span></div>
     </div>
     <nav aria-label="Navegación principal"><ul class="nav-list" id="navList"></ul></nav>
@@ -30,9 +34,8 @@
   </aside>
   <div class="main-wrap" id="mainWrap">
     <header class="topbar" role="banner">
-      <a class="topbar-logo" href="#/dashboard" aria-label="Nexo OS, ir al dashboard"><span class="brand-mark sm" aria-hidden="true">NX</span></a>
+      <a class="topbar-logo" href="#/dashboard" aria-label="Nexo OS, ir al dashboard"><span class="brand-mark sm" aria-hidden="true"><svg viewBox="0 0 36 36"><circle cx="13.5" cy="18" r="5.5" fill="none" stroke="currentColor" stroke-width="2.4"/><circle cx="22.5" cy="18" r="5.5" fill="none" stroke="currentColor" stroke-width="2.4"/><circle cx="28.5" cy="8.5" r="2.8" fill="#EDB04F"/></svg></span></a>
       <span class="topbar-date" id="topDate"></span>
-      <a class="cash-pill is-closed" id="cashPill" href="#/caja"><span class="dot" aria-hidden="true"></span><span id="cashPillText">Caja cerrada</span><span class="cash-amt" id="cashPillAmt"></span></a>
       <span class="spacer"></span>
       <a class="btn btn-primary" id="topSale" href="#/ventas"></a>
       <a class="btn btn-secondary hide-sm" id="topExpense" href="#/gastos?nuevo=1"></a>

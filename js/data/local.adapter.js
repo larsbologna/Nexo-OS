@@ -1,7 +1,7 @@
 // Adapter localStorage. Interfaz async; para un backend real, crear otro adapter con las mismas funciones
 // (init, list, get, insert, update, reset, dump) y cambiar el import en repo.js.
 const PREFIX = 'nexo:v1:';
-const SCHEMA_VERSION = 6; // v6: empleados (vendedor en ventas, sueldos por empleado) · v5: seed con caja abierta y ventas de hoy · v4: sin clientes ni fiado (v3: stockMovements, expenses; v2: cashSessions, cashMovements). Schema distinto => re-siembra.
+const SCHEMA_VERSION = 7; // v7: sin módulos Caja ni Empleados en la interfaz (re-siembra para limpiar avisos de caja) · v6: empleados (vendedor en ventas, sueldos por empleado) · v5: seed con caja abierta y ventas de hoy · v4: sin clientes ni fiado (v3: stockMovements, expenses; v2: cashSessions, cashMovements). Schema distinto => re-siembra.
 const OBSOLETE = ['customers']; // colecciones de schemas anteriores: se borran al re-sembrar
 export const COLLECTIONS = ['users', 'employees', 'items', 'operations', 'notifications', 'auditLog', 'settings', 'cashSessions', 'cashMovements', 'stockMovements', 'expenses'];
 

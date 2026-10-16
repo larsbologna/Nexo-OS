@@ -6,17 +6,14 @@ import * as auth from './auth/auth.mock.js';
 import * as M from './data/metrics.js';
 import cfgBase from '../config.js';
 import { icon } from './ui/icons.js';
-import { money } from './ui/format.js';
 
 const NAV = [
-  { name: 'dashboard', label: 'Dashboard', icon: 'dashboard' },
-  { name: 'caja', label: 'Caja', icon: 'wallet', badge: 'cash' },
+  { name: 'dashboard', label: 'Resumen', icon: 'dashboard' },
   { name: 'ventas', label: 'Ventas', icon: 'cart' },
   { name: 'productos', label: 'Productos', icon: 'tag' },
   { name: 'stock', label: 'Stock', icon: 'layers', badge: 'stock' },
   { name: 'gastos', label: 'Gastos', icon: 'receipt' },
   { name: 'finanzas', label: 'Finanzas', icon: 'trending' },
-  { name: 'empleados', label: 'Empleados', icon: 'users' },
   { name: 'config', label: 'Configuración', icon: 'settings' },
 ];
 
@@ -102,16 +99,10 @@ async function paintBell() {
   $('bell').setAttribute('aria-label', n ? `Notificaciones, ${n} sin leer` : 'Notificaciones');
 }
 
-/* Pill de caja + badges de nav (siempre con texto). Se refrescan con repo.onChange. */
+/* Badges de nav (siempre con texto). Se refrescan con repo.onChange. */
 async function paintStatus() {
-  const [live, items] = await Promise.all([repo.cashLive(), repo.list('items')]);
-  const open = !!live.session;
-  const pill = $('cashPill');
-  pill.className = `cash-pill ${open ? 'is-open' : 'is-closed'}`;
-  $('cashPillText').textContent = open ? 'Caja abierta' : 'Caja cerrada';
-  $('cashPillAmt').textContent = open ? `• ${money(live.summary.expected)}` : '';
+  const items = await repo.list('items');
   const crit = M.criticalProducts(items, cfgBase).length;
-  document.querySelectorAll('[data-badge="cash"]').forEach((b) => { b.hidden = false; b.className = `nav-badge ${open ? 'is-open' : 'is-closed'}`; b.textContent = open ? 'Abierta' : 'Cerrada'; });
   document.querySelectorAll('[data-badge="stock"]').forEach((b) => { b.hidden = !crit; b.className = 'nav-badge is-alert'; b.textContent = `${crit} crítico${crit === 1 ? '' : 's'}`; });
 }
 

@@ -19,7 +19,7 @@ export async function render(el, ctx) {
     <div class="stack">
       <section class="card" aria-labelledby="h-neg"><div class="card-head"><h2 id="h-neg">Datos del local</h2></div><div id="bizForm"></div></section>
       <section class="card" aria-labelledby="h-pago"><div class="card-head"><h2 id="h-pago">Métodos de pago</h2></div>
-        <p class="muted small" style="margin-bottom:8px">Los habilitados aparecen en Ventas y Gastos. Solo el efectivo suma a la caja diaria.</p>
+        <p class="muted small" style="margin-bottom:8px">Los habilitados aparecen en Ventas y Gastos.</p>
         <div id="payBox" class="stack" style="gap:0">${baseConfig.paymentMethods.map((m) => `<label class="check"><input type="checkbox" name="pm" value="${m}" ${c.paymentMethods.includes(m) ? 'checked' : ''}> ${esc(METHODS[m] || m)}</label>`).join('')}</div>
         <p class="form-error" id="payErr" role="alert" hidden></p>
         <div class="row" style="margin-top:12px"><button type="button" class="btn btn-primary" id="savePay">Guardar métodos</button></div></section>
@@ -87,7 +87,7 @@ export async function render(el, ctx) {
     } catch (e) { toast(e.message, 'error'); }
   });
   el.querySelector('#rst').addEventListener('click', async () => {
-    const ok = await confirmDialog({ title: 'Restablecer datos de demo', message: 'Se reemplazarán TODOS los datos locales (productos, ventas, stock, gastos, cajas, notificaciones) por los datos de ejemplo. Esta acción no se puede deshacer.', confirmText: 'Restablecer', danger: true });
+    const ok = await confirmDialog({ title: 'Restablecer datos de demo', message: 'Se reemplazarán TODOS los datos locales (productos, ventas, stock, gastos, notificaciones) por los datos de ejemplo. Esta acción no se puede deshacer.', confirmText: 'Restablecer', danger: true });
     if (!ok) return;
     try { await repo.resetDemo(); toast('Datos de demo restablecidos.', 'success'); setTimeout(() => location.reload(), 600); } catch (e) { toast(e.message, 'error'); }
   });

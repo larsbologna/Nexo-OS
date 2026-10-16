@@ -1,37 +1,73 @@
-/* Design tokens de Nexo OS. Solo tema oscuro (no hay toggle). Contrastes AA calculados sobre fondo #0D0607 y superficies translúcidas. */
+/* Design tokens de Nexo OS. Tema claro por defecto y oscuro según el sistema (prefers-color-scheme).
+   Verde pino como único acento de marca; ámbar solo como señal. Contrastes AA verificados sobre --bg y --surface. */
 :root {
-  color-scheme: dark;
+  color-scheme: light;
   /* Superficies */
-  --bg: #0d0607; --bg-elev: #151010; --bg-modal: #181010;
-  --surface: rgba(255, 255, 255, .03); --surface-2: rgba(255, 255, 255, .06); --surface-hover: rgba(255, 255, 255, .05);
-  --border: rgba(255, 255, 255, .10); --border-subtle: rgba(255, 255, 255, .06);
-  --border-input: rgba(255, 255, 255, .36); /* bordes de campos de formulario: >= 3:1 (WCAG 1.4.11); la referencia usa .10 */
-  /* Texto (--text-3 ajustado a .62 y --placeholder a .55 respecto de la referencia: AA) */
-  --text: #ffffff; --text-2: rgba(255, 255, 255, .74); --text-3: rgba(255, 255, 255, .62); --placeholder: rgba(255, 255, 255, .55);
+  --bg: #F2F4F1; --bg-elev: #FFFFFF; --bg-modal: #FFFFFF;
+  --surface: #FFFFFF; --surface-2: #EDF0EC; --surface-hover: #F5F7F4;
+  --border: #DCE2DD; --border-subtle: #E9EDE9;
+  --border-input: #A9B4AE; /* >= 3:1 sobre blanco (WCAG 1.4.11) */
+  /* Texto */
+  --text: #14201B; --text-2: #4B5A53; --text-3: #5F6C66; --placeholder: #6F7B75;
   /* Marca */
-  --primary: #A81F3D; --primary-hover: #8f1a34; --on-primary: #ffffff; --primary-text: #ff6b8a;
-  --accent: #E8C077; --accent-hover: #d9b36e; --on-accent: #1a0f10; --accent-tint: rgba(232, 192, 119, .10); --accent-border: rgba(232, 192, 119, .20);
-  --primary-tint: rgba(168, 31, 61, .10); --primary-border: rgba(168, 31, 61, .35);
+  --primary: #1D6B57; --primary-hover: #175747; --on-primary: #FFFFFF; --primary-text: #1D6B57;
+  --accent: #1D6B57; --accent-hover: #175747; --on-accent: #FFFFFF; --accent-tint: #E1EEE8; --accent-border: #BFD9CE;
+  --primary-tint: #E1EEE8; --primary-border: #BFD9CE;
+  --signal: #D9921F; --signal-tint: #FAEFD9;
+  /* Elemento activo (nav, chips, segmentados) */
+  --active-bg: #14201B; --active-text: #FFFFFF;
   /* Estados (siempre acompañados de texto/signo) */
-  --success: #34d399; --success-bg: rgba(16, 185, 129, .14); --success-solid: #10b981; --on-success-solid: #062a1c;
-  --danger: #f87171; --danger-text: #fca5a5; --danger-bg: rgba(248, 113, 113, .12);
-  --warning: #fbbf24; --warning-bg: rgba(245, 158, 11, .14);
-  --info: #7dd3fc; --info-bg: rgba(56, 189, 248, .12);
-  --focus: #E8C077;
-  --overlay: rgba(0, 0, 0, .70);
-  --invert-bg: #ffffff; --invert-text: #000000; --invert-text-2: rgba(0, 0, 0, .68);
-  /* Gráficos: barra degradé accent -> primary; series con texto */
-  --chart-1: #E8C077; --chart-2: #34d399; --chart-3: #ff6b8a; --chart-4: #a78bfa; --chart-5: #7dd3fc;
+  --success: #2C7A4C; --success-bg: #E2F0E7; --success-solid: #2C7A4C; --on-success-solid: #FFFFFF;
+  --danger: #B3372F; --danger-text: #A3322B; --danger-bg: #F8E3E0; --on-danger: #FFFFFF;
+  --warning: #8E5A0F; --warning-bg: #FAEFD9;
+  --info: #23628A; --info-bg: #E2EEF6;
+  --focus: #1D6B57;
+  --overlay: rgba(14, 22, 19, .45);
+  --invert-bg: #E1EEE8; --invert-text: #14201B; --invert-text-2: #3E5048;
+  --topbar-bg: rgba(242, 244, 241, .92);
+  --toast-bg: #14201B; --toast-text: #FFFFFF;
+  /* Gráficos */
+  --chart-1: #1D6B57; --chart-2: #D9921F; --chart-3: #23628A; --chart-4: #8A5A9E; --chart-5: #B3372F;
 
-  /* Tipografía: system-ui (0 requests); Inter solo si está instalada localmente */
-  --font: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  --fs-xs: 12px; --fs-sm: 13px; --fs-base: 14px; --fs-md: 16px; --fs-lg: 20px; --fs-xl: 24px; --fs-2xl: 28px; --fs-3xl: 36px;
+  /* Tipografía */
+  --font: "Instrument Sans", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-display: "Bricolage Grotesque", "Instrument Sans", system-ui, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --fs-xs: 12px; --fs-sm: 13px; --fs-base: 14px; --fs-md: 16px; --fs-lg: 20px; --fs-xl: 24px; --fs-2xl: 28px; --fs-3xl: 34px;
   --sp-1: 4px; --sp-2: 8px; --sp-3: 12px; --sp-4: 16px; --sp-5: 20px; --sp-6: 24px; --sp-7: 32px; --sp-8: 40px;
-  --r-sm: 8px; --r-md: 12px; --r-lg: 16px; --r-xl: 20px; --r-2xl: 24px; --r-3xl: 28px; --r-pill: 9999px;
-  --sh-pop: 0 25px 50px -12px rgba(0, 0, 0, .5);
-  --dur: 150ms;
-  --sidebar-w: 264px; --topbar-h: 68px; --touch: 44px;
+  --r-sm: 7px; --r-md: 10px; --r-lg: 12px; --r-xl: 14px; --r-2xl: 14px; --r-3xl: 18px; --r-pill: 9999px;
+  --sh-card: 0 1px 2px rgba(20, 32, 27, .05), 0 8px 24px -16px rgba(20, 32, 27, .18);
+  --sh-pop: 0 24px 60px -20px rgba(20, 32, 27, .35);
+  --dur: 160ms;
+  --sidebar-w: 248px; --topbar-h: 64px; --touch: 44px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --bg: #0E1311; --bg-elev: #151C19; --bg-modal: #151C19;
+    --surface: #151C19; --surface-2: #1C2521; --surface-hover: #19211E;
+    --border: #27322D; --border-subtle: #1F2824;
+    --border-input: #4E5D56;
+    --text: #E5ECE8; --text-2: #A6B3AD; --text-3: #8F9C96; --placeholder: #7F8C86;
+    --primary: #5DBE9F; --primary-hover: #79CDB1; --on-primary: #0A1511; --primary-text: #6FCBAD;
+    --accent: #5DBE9F; --accent-hover: #79CDB1; --on-accent: #0A1511; --accent-tint: #183129; --accent-border: #24463B;
+    --primary-tint: #183129; --primary-border: #24463B;
+    --signal: #EDB04F; --signal-tint: #33270F;
+    --active-bg: #E5ECE8; --active-text: #0E1311;
+    --success: #6FCB92; --success-bg: #163021; --success-solid: #6FCB92; --on-success-solid: #0A1511;
+    --danger: #F2857B; --danger-text: #F59A91; --danger-bg: #3A1D1A; --on-danger: #1A0705;
+    --warning: #E9B565; --warning-bg: #33270F;
+    --info: #7FBCE3; --info-bg: #142836;
+    --focus: #5DBE9F;
+    --overlay: rgba(0, 0, 0, .62);
+    --invert-bg: #183129; --invert-text: #E5ECE8; --invert-text-2: #A6C2B6;
+    --topbar-bg: rgba(14, 19, 17, .92);
+    --toast-bg: #E5ECE8; --toast-text: #0E1311;
+    --chart-1: #5DBE9F; --chart-2: #EDB04F; --chart-3: #7FBCE3; --chart-4: #C39BD3; --chart-5: #F2857B;
+    --sh-card: 0 1px 2px rgba(0, 0, 0, .3), 0 10px 26px -16px rgba(0, 0, 0, .6);
+    --sh-pop: 0 24px 60px -20px rgba(0, 0, 0, .7);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

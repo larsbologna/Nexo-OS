@@ -35,11 +35,11 @@ export async function render(el) {
         <div class="card kpi"><div class="kpi-top"><span class="kpi-ic">${icon('receipt', 18)}</span><span class="kpi-chip">${f.expensesCount} gasto${f.expensesCount === 1 ? '' : 's'}</span></div><div class="kpi-label">Gastos operativos</div><div class="kpi-value num">${esc(money(f.opex))}</div></div>
       </div>
       <div style="margin-top:16px">
-        <section class="card-invert" aria-labelledby="h-res"><h2 id="h-res" class="k" style="font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--invert-text-2)">Resultado ${P_TXT[period]}</h2>
+        <section class="card-invert" aria-labelledby="h-res"><h2 id="h-res" class="k" style="font-family:var(--font);font-size:13px;color:var(--invert-text-2)">Resultado ${P_TXT[period]}</h2>
           <p class="v num" style="font-size:36px">${esc(signedMoney(f.result).replace('+', ''))}</p>
           <p class="s"><strong>${profit ? 'Ganancia' : 'Pérdida'}</strong> · ${esc(pctTxt(f.resultPct))} de las ventas</p>
-          <dl class="kv" style="margin-top:16px;color:#000"><dt>Ventas</dt><dd class="num">${esc(money(f.sales))}</dd><dt>− Costo de mercadería</dt><dd class="num">${esc(money(f.cmv))}</dd><dt>− Gastos operativos</dt><dd class="num">${esc(money(f.opex))}</dd><dt><strong>= Resultado</strong></dt><dd class="num"><strong>${esc(signedMoney(f.result).replace('+', ''))}</strong></dd></dl>
-          <p class="s" style="margin-top:12px">Compras de mercadería del período: ${esc(money(f.purchases))} (flujo de caja; su costo ya entra por el costo de lo vendido).</p></section>
+          <dl class="kv" style="margin-top:16px"><dt>Ventas</dt><dd class="num">${esc(money(f.sales))}</dd><dt>− Costo de mercadería</dt><dd class="num">${esc(money(f.cmv))}</dd><dt>− Gastos operativos</dt><dd class="num">${esc(money(f.opex))}</dd><dt><strong>= Resultado</strong></dt><dd class="num"><strong>${esc(signedMoney(f.result).replace('+', ''))}</strong></dd></dl>
+          <p class="s" style="margin-top:12px">Compras de mercadería del período: ${esc(money(f.purchases))} (flujo de fondos; su costo ya entra por el costo de lo vendido).</p></section>
       </div>
       <div class="grid" style="margin-top:16px;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr))">
         <section class="card" aria-labelledby="h-mc"><div class="card-head"><h2 id="h-mc">Margen por categoría</h2></div>
@@ -47,7 +47,7 @@ export async function render(el) {
         <section class="card" aria-labelledby="h-ec"><div class="card-head"><h2 id="h-ec">Gastos por categoría</h2></div>
           ${ec.length ? `<div class="stack" style="gap:16px">${ec.map((x) => `<div class="meter"><div class="meter-top"><span>${esc(x.category)}${x.category === cfgBase.merchandiseCategory ? ' <span class="badge badge-neutral">No entra al resultado</span>' : ''}</span><span class="num">${esc(money(x.total))}</span></div><div class="bar-track" aria-hidden="true"><div class="bar-fill" style="width:${Math.max(2, Math.round((x.total / maxExp) * 100))}%"></div></div></div>`).join('')}</div>` : '<div class="empty"><p>Sin gastos en el período.</p></div>'}</section>
       </div>
-      <section class="card" style="margin-top:16px" aria-labelledby="h-cf"><div class="card-head"><h2 id="h-cf">Flujo de caja por método</h2></div>
+      <section class="card" style="margin-top:16px" aria-labelledby="h-cf"><div class="card-head"><h2 id="h-cf">Flujo de fondos por medio de pago</h2></div>
         <div class="table-wrap"><table class="table"><caption class="sr-only">Cobros y pagos por método de pago ${esc(P_TXT[period])}</caption><thead><tr><th scope="col">Método</th><th scope="col" class="num">Cobrado</th><th scope="col" class="num">Pagado (gastos)</th><th scope="col" class="num">Neto</th></tr></thead><tbody>
         ${cf.map((x) => `<tr><td data-label="Método">${esc(METHODS[x.method] || x.method)}</td><td class="num" data-label="Cobrado">${esc(money(x.in))}</td><td class="num" data-label="Pagado">${esc(money(x.out))}</td><td class="num" data-label="Neto"><strong>${esc(signedMoney(x.net).replace('+', ''))}</strong></td></tr>`).join('')}
         <tr><td data-label="Método"><strong>Total</strong></td><td class="num" data-label="Cobrado"><strong>${esc(money(cf.reduce((s, x) => s + Math.round(x.in * 100), 0) / 100))}</strong></td><td class="num" data-label="Pagado"><strong>${esc(money(cf.reduce((s, x) => s + Math.round(x.out * 100), 0) / 100))}</strong></td><td class="num" data-label="Neto"><strong>${esc(signedMoney(cf.reduce((s, x) => s + Math.round(x.net * 100), 0) / 100).replace('+', ''))}</strong></td></tr></tbody></table></div>

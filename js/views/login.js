@@ -8,7 +8,7 @@ import { esc } from '../ui/format.js';
 export async function render(el) {
   const c = getConfig();
   el.innerHTML = `<div class="login-wrap"><div class="card login-card">
-    <div class="login-brand"><span class="brand-mark" aria-hidden="true">${esc(c.brandMark || 'NX')}</span><div><h1>${esc(c.appName)}</h1><p class="muted small">${esc(c.tagline || '')}</p></div></div>
+    <div class="login-brand"><span class="brand-mark" aria-hidden="true">${document.getElementById('brandMark').innerHTML}</span><div><h1>${esc(c.appName)}</h1><p class="muted small">${esc(c.tagline || '')}</p></div></div>
     <div class="demo-banner"><strong>Modo demostración — no seguro.</strong> Datos de ejemplo guardados en este navegador.<br>Email: <code>admin@demo.local</code> · Clave: <code>Demo2026!</code></div>
     <div id="loginForm"></div></div></div>`;
   const f = buildForm({

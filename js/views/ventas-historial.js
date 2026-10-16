@@ -8,9 +8,6 @@ import { ventasNav } from './ventas.js';
 export async function render(el, ctx) {
   el.innerHTML = `<div class="page-head"><div><h1>Historial de ventas</h1><p class="sub">Todas las ventas registradas, con su estado.</p></div>${ventasNav('hist')}</div><div id="tbl"></div>`;
   const methods = Object.keys(METHODS);
-  // Filtro por vendedor: todos los empleados (también archivados: sus ventas pasadas siguen en el historial) + "Sin vendedor"
-  const emps = (await repo.list('employees', { archived: 'all' })).sort((a, b) => a.name.localeCompare(b.name));
-  const sellerName = (r) => (r.sellerSnapshot ? r.sellerSnapshot.name : '');
   const t = createTable({
     caption: 'Historial de ventas', pageSize: 10, initialSearch: ctx.query.get('q') || '', dateField: 'date', initialSort: { key: 'date', dir: 'desc' },
     empty: { title: 'Todavía no hay ventas', text: 'Registrá la primera desde "Nueva venta".' },
@@ -20,16 +17,14 @@ export async function render(el, ctx) {
       { key: 'items', label: 'Detalle', cls: 'col-lg', render: (r) => esc(r.lines.map((l) => `${l.qty}× ${l.nameSnapshot}`).join(', ')) },
       { key: 'total', label: 'Total', sortable: true, num: true, render: (r) => esc(money(r.total)) },
       { key: 'paymentMethod', label: 'Método', render: (r) => esc(METHODS[r.paymentMethod] || r.paymentMethod) },
-      { key: 'seller', label: 'Vendedor', sortable: true, value: sellerName, render: (r) => (r.sellerSnapshot ? esc(r.sellerSnapshot.name) : '<span class="muted">—</span>') },
       { key: 'status', label: 'Estado', sortable: true, render: (r) => badge(r.status) },
       { key: 'actions', label: 'Acciones', render: (r) => `<span class="row-actions"><button type="button" class="btn btn-secondary btn-sm" data-action="view" aria-label="Ver venta #${esc(r.id.slice(0, 8))} del ${esc(dateTime(r.date))}">Ver</button></span>` },
     ],
     filters: [
       { key: 'status', label: 'Estado', options: [{ value: 'pagada', label: 'Pagada' }, { value: 'anulada', label: 'Anulada' }], test: (r, v) => r.status === v },
       { key: 'paymentMethod', label: 'Método', options: methods.map((value) => ({ value, label: METHODS[value] })), test: (r, v) => r.paymentMethod === v },
-      { key: 'seller', label: 'Vendedor', options: [{ value: 'none', label: 'Sin vendedor' }, ...emps.map((e) => ({ value: e.id, label: e.archivedAt ? `${e.name} (archivado)` : e.name }))], test: (r, v) => (v === 'none' ? !r.sellerId : r.sellerId === v) },
     ],
-    search: (r) => `${r.id.slice(0, 8)} ${sellerName(r)} ${r.lines.map((l) => l.nameSnapshot).join(' ')}`,
+    search: (r) => `${r.id.slice(0, 8)} ${r.lines.map((l) => l.nameSnapshot).join(' ')}`,
     load: () => repo.list('operations'),
     onAction: (a, row) => showOperation(row, () => t.refresh()),
   });

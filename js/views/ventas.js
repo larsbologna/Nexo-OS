@@ -1,4 +1,4 @@
-// POS: buscador (Enter agrega), chips de categoría, grilla, carrito. Cobrar => repo.createOperation (stock y caja los maneja el repo).
+// POS: buscador (Enter agrega), chips de categoría, grilla, carrito. Cobrar => repo.createOperation (el stock lo maneja el repo).
 import * as repo from '../data/repo.js';
 import * as M from '../data/metrics.js';
 import cfgBase from '../../config.js';
@@ -16,7 +16,7 @@ export function ventasNav(active) {
 function ticketBody(op, id) {
   const b = getConfig().business;
   return `<div class="ticket"${id ? ` id="${id}"` : ''}><h3>${esc(b.name)}</h3><p class="c">${esc(b.address || '')}</p><p class="c">CUIT ${esc(b.taxId || '—')}</p><hr>
-        <div class="tl"><span>Fecha</span><span>${esc(dateTime(op.date))}</span></div><div class="tl"><span>Ticket</span><span>#${esc(op.id.slice(0, 8))}</span></div>${op.sellerSnapshot ? `<div class="tl"><span>Vendedor</span><span>${esc(op.sellerSnapshot.name)}</span></div>` : ''}<hr>
+        <div class="tl"><span>Fecha</span><span>${esc(dateTime(op.date))}</span></div><div class="tl"><span>Ticket</span><span>#${esc(op.id.slice(0, 8))}</span></div><hr>
         ${op.lines.map((l) => `<div>${esc(l.nameSnapshot)}</div><div class="tl"><span>${l.qty} x ${esc(money(l.unitPrice))}</span><span>${esc(money(l.qty * l.unitPrice))}</span></div>`).join('')}<hr>
         <div class="tl tot"><span>TOTAL</span><span>${esc(money(op.total))}</span></div>
         <div class="tl"><span>Pago</span><span>${esc(METHODS[op.paymentMethod] || op.paymentMethod)}</span></div><hr><p class="c">¡Gracias por su compra!</p></div>
@@ -46,11 +46,6 @@ function warmTicket(method) {
   if ('requestIdleCallback' in window) requestIdleCallback(run, { timeout: 3000 }); else setTimeout(run, 300);
 }
 
-/* Vendedor (opcional): se recuerda el último elegido durante la sesión del navegador (pestaña). */
-const SELLER_KEY = 'nexo:v1:pos:seller';
-function readSeller() { try { return sessionStorage.getItem(SELLER_KEY) || ''; } catch (e) { return ''; } }
-function saveSeller(id) { try { if (id) sessionStorage.setItem(SELLER_KEY, id); else sessionStorage.removeItem(SELLER_KEY); } catch (e) { /* sin storage: solo no se recuerda */ } }
-
 /** Ticket imprimible (window.print con @media print: solo se imprime el diálogo). */
 export function showTicket(op) {
   return openModal({
@@ -65,14 +60,14 @@ export function showTicket(op) {
 
 export async function render(el, ctx) {
   if (ctx.id === 'historial') return (await import('./ventas-historial.js')).render(el, ctx);
-  let items = [], sellers = [];
+  let items = [];
   const cart = new Map(); // itemId -> qty
-  const st = { q: '', cat: '', method: 'efectivo', sellerId: readSeller() };
+  const st = { q: '', cat: '', method: 'efectivo' };
   const methods = getConfig().paymentMethods;
   if (!methods.includes(st.method)) st.method = methods[0];
   document.body.classList.add('has-cartbar');
 
-  el.innerHTML = `<div class="page-head"><div><h1>Ventas</h1><p class="sub">Punto de venta: descuenta stock y registra en Caja y Finanzas.</p></div>${ventasNav('pos')}</div>
+  el.innerHTML = `<div class="page-head"><div><h1>Ventas</h1><p class="sub">Punto de venta: descuenta stock y registra en Finanzas.</p></div>${ventasNav('pos')}</div>
     <div class="pos">
       <section aria-labelledby="h-prod">
         <h2 class="sr-only" id="h-prod">Productos y servicios</h2>
@@ -86,13 +81,12 @@ export async function render(el, ctx) {
       <aside class="cart" id="cart" aria-labelledby="h-cart">
         <div class="card-head" style="margin:0"><h2 id="h-cart">Carrito</h2><button type="button" class="btn btn-ghost btn-icon cart-close" id="cartClose" aria-label="Cerrar carrito">${icon('close')}</button></div>
         <div class="cart-lines" id="lines"></div>
-        <div class="cart-opts"><div class="field"><label for="seller">Vendedor (opcional)</label><select class="input" id="seller"></select></div>
-        <div class="field"><label for="meth">Método de pago</label><select class="input" id="meth">${methods.map((k) => `<option value="${k}">${esc(METHODS[k] || k)}</option>`).join('')}</select></div></div>
+        <div class="cart-opts"><div class="field"><label for="meth">Método de pago</label><select class="input" id="meth">${methods.map((k) => `<option value="${k}">${esc(METHODS[k] || k)}</option>`).join('')}</select></div></div>
         <p class="form-error" id="posErr" role="alert" hidden></p>
         <div class="cart-foot">
           <div class="cart-total"><span>Total</span><span class="t num" id="total"></span></div>
           <button type="button" class="btn btn-accent btn-lg btn-block" id="pay">Cobrar</button>
-          <p class="pos-note">Descuenta stock automático • Registra en Caja y Finanzas</p>
+          <p class="pos-note">Descuenta stock automático • Registra en Finanzas</p>
         </div>
       </aside>
     </div>
@@ -104,9 +98,7 @@ export async function render(el, ctx) {
   const countOf = () => [...cart.values()].reduce((s, q) => s + q, 0);
 
   async function load() {
-    const [its, emps] = await Promise.all([repo.list('items'), repo.list('employees')]);
-    items = its.filter((i) => i.active);
-    sellers = emps.filter((e) => e.status === 'activo').sort((a, b) => a.name.localeCompare(b.name));
+    items = (await repo.list('items')).filter((i) => i.active);
   }
   const matches = () => {
     const q = st.q.trim().toLowerCase();
@@ -144,11 +136,6 @@ export async function render(el, ctx) {
     $('#pay').textContent = n ? `Cobrar ${money(t)}` : 'Cobrar';
   }
   function paintMethod() { $('#meth').value = st.method; }
-  function paintSeller() {
-    if (st.sellerId && !sellers.some((e) => e.id === st.sellerId)) { st.sellerId = ''; saveSeller(''); } // archivado/inactivo desde la última venta
-    $('#seller').innerHTML = `<option value="">Sin asignar</option>${sellers.map((e) => `<option value="${esc(e.id)}">${esc(e.name)}</option>`).join('')}`;
-    $('#seller').value = st.sellerId;
-  }
   let liveT;
   const liveLater = (t) => { clearTimeout(liveT); liveT = setTimeout(() => { const p = $('#posLive'); if (p) p.textContent = t; }, 400); };
   const focusable = (root) => [...root.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')].filter((n) => !n.disabled && !n.hidden && n.offsetParent !== null);
@@ -217,7 +204,6 @@ export async function render(el, ctx) {
     else if (e.target.closest('[data-rm]')) removeLine(id);
   });
   $('#meth').addEventListener('change', (e) => { st.method = e.target.value; });
-  $('#seller').addEventListener('change', (e) => { st.sellerId = e.target.value; saveSeller(st.sellerId); });
   $('#cartToggle').addEventListener('click', () => { if ($('#cart').classList.contains('open')) closeSheet(); else openSheet(); });
   $('#cartClose').addEventListener('click', closeSheet);
   const onKey = (e) => {
@@ -238,23 +224,22 @@ export async function render(el, ctx) {
     if (!cart.size) return;
     const err = (m) => { const p = $('#posErr'); p.textContent = m; p.hidden = !m; };
     err('');
-    const input = { paymentMethod: st.method, sellerId: st.sellerId || null, lines: [...cart].map(([itemId, qty]) => ({ itemId, qty })) };
+    const input = { paymentMethod: st.method, lines: [...cart].map(([itemId, qty]) => ({ itemId, qty })) };
     const btn = $('#pay'); btn.disabled = true; btn.setAttribute('aria-busy', 'true');
     try {
       let res = await repo.createOperation(input);
       if (res.needsConfirmation) {
         const parts = [];
         if (res.negatives.length) parts.push(`<p>Esta venta deja el stock en negativo:</p><ul>${res.negatives.map((n) => `<li>${esc(n.name)}: stock ${n.stock}, se venden ${n.qty}</li>`).join('')}</ul>`);
-        if (res.noCash) parts.push('<p>No hay una caja abierta: este cobro en efectivo no se sumará a ninguna caja. Podés abrirla en Caja antes de cobrar.</p>');
         btn.disabled = false; btn.removeAttribute('aria-busy'); // que el retorno de foco de modal.js encuentre #pay habilitado
-        const ok = await confirmDialog({ title: res.negatives.length ? 'Stock insuficiente' : 'No hay caja abierta', danger: true, confirmText: 'Cobrar igualmente', cancelText: 'Revisar', html: true, message: `${parts.join('')}<p style="margin-top:12px">¿Confirmás la venta igualmente?</p>` });
+        const ok = await confirmDialog({ title: 'Stock insuficiente', danger: true, confirmText: 'Cobrar igualmente', cancelText: 'Revisar', html: true, message: `${parts.join('')}<p style="margin-top:12px">¿Confirmás la venta igualmente?</p>` });
         if (!ok) return;
         btn.disabled = true; btn.setAttribute('aria-busy', 'true');
         res = await repo.createOperation(input, { confirmNegativeStock: true, confirmNoCash: true });
       }
       cart.clear(); setOpen(false);
       toast(`Venta registrada: ${money(res.operation.total)}.`, 'success');
-      await load(); paintCats(); paintGrid(); paintMethod(); paintSeller(); paintCart();
+      await load(); paintCats(); paintGrid(); paintMethod(); paintCart();
       await showTicket(res.operation);
       const q = $('#q'); if (q) q.focus(); // la vista puede haberse cerrado mientras se mostraba el ticket
     } catch (e) { if ($('#posErr')) err(e.message); toast(e.message, 'error'); }
@@ -262,7 +247,7 @@ export async function render(el, ctx) {
   });
 
   await load();
-  paintCats(); paintGrid(); paintMethod(); paintSeller(); paintCart();
+  paintCats(); paintGrid(); paintMethod(); paintCart();
   warmTicket(st.method);
   return () => { inertEls().forEach((n) => { n.inert = false; }); clearTimeout(liveT); document.body.classList.remove('has-cartbar'); document.removeEventListener('keydown', onKey); };
 }

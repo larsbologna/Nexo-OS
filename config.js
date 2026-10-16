@@ -1,6 +1,6 @@
-// ÚNICO punto de configuración por defecto: marca, negocio, moneda/locale, métodos de pago, caja y gastos.
-// Los colores viven en css/tokens.css (solo tema oscuro). Si cambiás colores, verificá contraste AA (>= 4.5:1 texto).
-// Contrastes verificados: #FFFFFF sobre #A81F3D = 7.2:1 · #1A0F10 sobre #E8C077 = 11.6:1 · #FF6B8A sobre #0D0607 = 7.4:1.
+// ÚNICO punto de configuración por defecto: marca, negocio, moneda/locale, métodos de pago y gastos.
+// Los colores viven en css/tokens.css (tema claro y oscuro). Si cambiás colores, verificá contraste AA (>= 4.5:1 texto).
+// Contrastes verificados: #FFFFFF sobre #1D6B57 = 6.4:1 · #14201B sobre #F2F4F1 = 15.6:1 · #0A1511 sobre #5DBE9F = 8.6:1.
 export default {
   appName: 'Nexo OS',
   tagline: 'Sistema operativo',
@@ -13,11 +13,10 @@ export default {
   decimals: 2,
   lowStockThreshold: 3,       // fallback de stock mínimo cuando un producto no define minStock
   paymentMethods: ['efectivo', 'transferencia', 'tarjeta', 'qr'], // habilitados por defecto (editable en Configuración)
-  cashMethods: ['efectivo'],  // métodos de pago que entran a la caja (D4)
-  cashTolerance: 500,         // |diferencia| > tolerancia exige nota al cerrar (D3)
-  cashStaleHours: 16,         // caja abierta hace más de N h (o de un día anterior) genera notificación (D5)
+  cashMethods: [],            // módulo Caja desactivado: ningún método de pago entra a una caja diaria
+  cashTolerance: 500,
+  cashStaleHours: 16,
   expenseCategories: ['Alquiler', 'Servicios', 'Sueldos', 'Marketing', 'Compra de mercadería', 'Limpieza', 'Impuestos', 'Varios'],
-  merchandiseCategory: 'Compra de mercadería', // va al flujo de caja, NO al resultado (el costo entra por CMV al vender)
-  salaryCategory: 'Sueldos',  // gastos de esta categoría pueden vincularse a un empleado (pago de sueldo)
-  employeePositions: ['Encargado/a', 'Vendedor/a', 'Cajero/a', 'Administrativo/a', 'Depósito'],
+  merchandiseCategory: 'Compra de mercadería', // va al flujo de fondos, NO al resultado (el costo entra por CMV al vender)
+  salaryCategory: 'Sueldos',
 };

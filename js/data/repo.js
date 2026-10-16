@@ -15,6 +15,8 @@ const CASH_COLS = ['cashSessions', 'cashMovements'];
 const TX_COLS = ['operations', 'stockMovements', 'expenses'];
 const TX_MSG = { operations: 'Las operaciones son inmutables (solo se pueden anular o marcar pagadas).', stockMovements: 'Los movimientos de stock son inmutables (se corrigen con un ajuste).', expenses: 'Los gastos son inmutables (se corrigen anulando y registrando uno nuevo).' };
 const isCashMethod = (m) => (cfg.cashMethods || []).includes(m);
+// Con cashMethods vacío el módulo Caja queda apagado: no hay avisos ni movimientos de caja (los datos históricos no se tocan).
+const cashEnabled = () => (cfg.cashMethods || []).length > 0;
 // Serializa las escrituras críticas de caja: evita que dos llamadas concurrentes pasen el mismo chequeo (2 cajas, doble cierre).
 let lock = Promise.resolve();
 function exclusive(fn) { const p = lock.then(fn); lock = p.catch(() => {}); return p; }
@@ -345,8 +347,8 @@ async function expenseSession(e) {
 export async function voidExpensePrompt(id) {
   await ensure();
   const e = await adapter.get('expenses', id);
-  const s = e ? await expenseSession(e) : null;
-  return { askRefund: !!s && s.status === 'cerrada', hasOpenCash: !!(await findOpenSession()) };
+  const s = e && cashEnabled() ? await expenseSession(e) : null;
+  return { askRefund: !!s && s.status === 'cerrada', hasOpenCash: cashEnabled() && !!(await findOpenSession()) };
 }
 /**
  * Anular: reason obligatorio. Gasto en efectivo cuya caja sigue abierta => ingreso compensatorio (el esperado vuelve).
@@ -359,7 +361,7 @@ export function voidExpense(id, { reason, refunded = false } = {}) {
     if (!e) throw new Error('Gasto inexistente.');
     if (e.status === 'anulado') return e;
     if (!String(reason || '').trim()) throw new Error('El motivo de la anulación es obligatorio.');
-    const s = await expenseSession(e);
+    const s = cashEnabled() ? await expenseSession(e) : null;
     const t = now();
     if (s && s.status === 'abierta') await insertMovement(s.id, 'ingreso', e.amount, `Anulación de gasto: ${e.description}`, null, { refType: 'expense', refId: e.id });
     else if (s && refunded) {
@@ -455,7 +457,7 @@ export async function markAllRead() {
 export async function refreshNotifications() {
   const items = await adapter.list('items');
   // Caja abierta de un día anterior o hace más de cashStaleHours (D5: sin cierre automático, solo aviso). Dedupe por key.
-  const open = await findOpenSession();
+  const open = cashEnabled() ? await findOpenSession() : null;
   if (open && (dayKey(open.openedAt) !== dayKey(clock()) || clock().getTime() - new Date(open.openedAt).getTime() > cfg.cashStaleHours * 3600000)) {
     await notify('caja', 'Hay una caja abierta desde un turno anterior. Contá el efectivo y cerrala.', 'cashSession', open.id, `caja-abierta:${open.id}`);
   }

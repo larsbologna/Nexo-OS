@@ -1,6 +1,6 @@
 # Nexo OS — demo estática
 
-Panel para negocios locales: Dashboard, Caja, Ventas (POS), Productos, Stock, Gastos, Finanzas, Empleados y Configuración. HTML/CSS/JS sin dependencias ni build; los datos de ejemplo se guardan en el navegador (`localStorage`).
+Panel para negocios locales: Resumen, Ventas (POS), Productos, Stock, Gastos, Finanzas y Configuración. HTML/CSS/JS sin dependencias ni build; los datos de ejemplo se guardan en el navegador (`localStorage`). Tema claro u oscuro según la configuración del dispositivo.
 
 **Demo, no segura:** el login es simulado en el navegador. No cargar datos reales.
 
